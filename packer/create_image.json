@@ -1,0 +1,38 @@
+{
+  "variables": {
+    "aws_access_key": "AWS_ACCESS_KEY HERE",
+    "aws_secret_key": "AWS_SECRET_KEY HERE"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "ssh_pty": "true",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "us-east-1",
+    "source_ami": "ami-38de8d2f",
+    "instance_type": "t2.micro",
+    "ssh_username": "ubuntu",
+    "ami_name": "packer-example {{timestamp}}"
+  }],
+
+  "provisioners": [{
+        "type": "file",
+        "source": "ejabberd.yml",
+        "destination": "/home/ubuntu/ejabberd.yml"
+    },
+    {
+        "type": "file",
+        "source": "setup.sh",
+        "destination": "/home/ubuntu/setup.sh"
+    },
+    {
+    "type": "shell",
+    "execute_command": "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+    "inline": [
+      "sleep 30",
+      "chmod +x setup.sh",
+      "sudo ./setup.sh"
+    ]
+  }
+    ]
+}
