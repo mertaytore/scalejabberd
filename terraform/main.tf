@@ -9,20 +9,55 @@ resource "aws_instance" "ejabberdnode" {
   instance_type = "t2.micro"
   key_name      = "terra"
   count         = "${var.instance_count}"
-  security_groups = ["allow_all"]
+  security_groups = ["allow_traffic"]
   tags {
     Name = "ejabberd-${count.index}"
   }
 }
 
-resource "aws_security_group" "allow_all" {
-   name        = "allow_all"
-   description = "Allow all inbound traffic"
+resource "aws_security_group" "allow_traffic" {
+   name        = "allow_traffic"
+   description = "Allow portwise inbound traffic"
 
    ingress {
-     from_port   = 0
-     to_port     = 0
-     protocol    = "-1"
+     from_port   = 4000
+     to_port     = 4010
+     protocol    = "tcp"
+     cidr_blocks = ["0.0.0.0/0"]
+   }
+
+   ingress {
+     from_port   = 4369
+     to_port     = 4369
+     protocol    = "tcp"
+     cidr_blocks = ["0.0.0.0/0"]
+   }
+
+   ingress {
+     from_port   = 5222
+     to_port     = 5223
+     protocol    = "tcp"
+     cidr_blocks = ["0.0.0.0/0"]
+   }
+
+   ingress {
+     from_port   = 5269
+     to_port     = 5269
+     protocol    = "tcp"
+     cidr_blocks = ["0.0.0.0/0"]
+   }
+
+   ingress {
+     from_port   = 5280
+     to_port     = 5280
+     protocol    = "tcp"
+     cidr_blocks = ["0.0.0.0/0"]
+   }
+
+   ingress {
+     from_port = 22
+     to_port = 22
+     protocol = "tcp"
      cidr_blocks = ["0.0.0.0/0"]
    }
 
