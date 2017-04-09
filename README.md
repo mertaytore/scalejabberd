@@ -32,3 +32,16 @@ terraform apply \
 
 After Terraform has finished, you can access your ejabberd's admin panel from your server's public ip's 5280 port: SERVER_PUBLIC_IP:5280/admin
 
+### How to add a new node to the cluster?
+By setting your 'instance_count' parameter to any number bigger than 1! Terraform will handle the rest by provisioning. When you increase the instance count in the cluster, new_terra_setup.sh runs to download ejabbberd 17.01. It is installed by the parameters you've given. <br>
+After you have a node that is started by new_terra_setup.sh, cluster_setup.sh script runs to add the particular node to the running cluster. In cluster_setup.sh, the variables that keep the IPs of the nodes are formatted in the form that can be joined to a cluster directly. <br> <br>
+Code below is run in cluster_setup.sh and does the following so that it's in the proper form for a join operation: <br>
+ip-xxx.xxx.xxx.xxx -> ip-xxx-xxx-xxx-xxx
+
+```bash
+export temp_ip=`echo ip-$temp_ip | tr  '.'  '-'`
+export ejabberd_cluster_ip=`echo ejabberd@$cluster_ip | tr  '.'  '-'`
+```
+
+### How to remove a node from the cluster?
+By simply decreasing the 'instance_count' parameter to a value that is smaller than its previous value. Or if you want to destroy the whole cluster, you can use the destroy option of Terraform.
