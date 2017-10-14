@@ -7,7 +7,7 @@ provider "aws" {
 resource "aws_instance" "ejabberdnode" {
   ami           = "${var.ami}"
   instance_type = "t2.micro"
-  key_name      = "terra"
+  key_name      = "YOUR_AWS_KEYNAME"
   count         = "${var.instance_count}"
   security_groups = ["allow_traffic"]
   tags {
@@ -20,45 +20,10 @@ resource "aws_security_group" "allow_traffic" {
    description = "Allow portwise inbound traffic"
 
    ingress {
-     from_port   = 4000
-     to_port     = 4010
-     protocol    = "tcp"
-     cidr_blocks = ["0.0.0.0/0"]
-   }
-
-   ingress {
-     from_port   = 4369
-     to_port     = 4369
-     protocol    = "tcp"
-     cidr_blocks = ["0.0.0.0/0"]
-   }
-
-   ingress {
-     from_port   = 5222
-     to_port     = 5223
-     protocol    = "tcp"
-     cidr_blocks = ["0.0.0.0/0"]
-   }
-
-   ingress {
-     from_port   = 5269
-     to_port     = 5269
-     protocol    = "tcp"
-     cidr_blocks = ["0.0.0.0/0"]
-   }
-
-   ingress {
-     from_port   = 5280
-     to_port     = 5280
-     protocol    = "tcp"
-     cidr_blocks = ["0.0.0.0/0"]
-   }
-
-   ingress {
-     from_port = 22
-     to_port = 22
-     protocol = "tcp"
-     cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
    }
 
    egress {
@@ -98,7 +63,7 @@ resource "null_resource" "install" {
   inline = [
     "chmod +x ~/new_terra_setup.sh",
     "echo 'chmod done'",
-    "sudo ~/new_terra_setup.sh ${var.admin_ejabberd} ${var.pass_ejabberd} ${var.erlang_cookie} ${element(aws_instance.ejabberdnode.*.private_ip, count.index)} ${aws_instance.ejabberdnode.0.private_ip}",
+    "sudo ~/new_terra_setup.sh ${var.admin_ejabberd} ${var.pass_ejabberd} ${var.erlang_cookie} ${element(aws_instance.ejabberdnode.*.private_ip, count.index)} ${aws_instance.ejabberdnode.0.private_ip} ${var.ejabberddomain}",
     "echo 'run done'",
   ]
   }

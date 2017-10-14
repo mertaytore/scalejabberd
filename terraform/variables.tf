@@ -9,15 +9,15 @@ variable "region" {
 }
 
 variable "ami" {
-  default = "ami-515de947"
+  default = "ami-8c3beef6"
 }
 
-variable "pass_ejabberd" {
+variable "admin_ejabberd" {
   type    = "string"
   default = " "
 }
 
-variable "admin_ejabberd" {
+variable "pass_ejabberd" {
   type    = "string"
   default = " "
 }
@@ -29,4 +29,9 @@ variable "instance_count" {
 variable "erlang_cookie" {
   type    = "string"
   default = "default"
+}
+
+variable "ejabberddomain" {
+  type    = "string"
+  default = "localhost"
 }

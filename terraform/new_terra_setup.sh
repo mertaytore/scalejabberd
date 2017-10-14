@@ -9,7 +9,7 @@ wget https://www.process-one.net/downloads/ejabberd/17.01/ejabberd-17.01-linux-x
 sudo chmod +x ejabberd-17.01-linux-x86_64-installer.run
 export temp_ip=$4
 export temp_ip=`echo ip-$temp_ip | tr  '.'  '-'`
-./ejabberd-17.01-linux-x86_64-installer.run --mode unattended --installdir /home/ubuntu/ejabberd-17.01 --hostname $temp_ip --admin $1 --adminpw $2 --cluster 1 --ejabberddomain localhost
+./ejabberd-17.01-linux-x86_64-installer.run --mode unattended --installdir /home/ubuntu/ejabberd-17.01 --hostname $temp_ip --admin $1 --adminpw $2 --cluster 1 --ejabberddomain $6
 
 # .erlang.cookie setup
 export cookie=$3
