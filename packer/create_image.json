@@ -15,11 +15,7 @@
     "ami_name": "packer-example {{timestamp}}"
   }],
 
-  "provisioners": [{
-        "type": "file",
-        "source": "ejabberd.yml",
-        "destination": "/home/ubuntu/ejabberd.yml"
-    },
+  "provisioners": [
     {
         "type": "file",
         "source": "setup.sh",
@@ -32,7 +28,7 @@
       "sleep 30",
       "chmod +x setup.sh",
       "sudo ./setup.sh"
-    ]
-  }
-    ]
+      ]
+    }
+  ]
 }
