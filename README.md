@@ -18,6 +18,9 @@ Terraform installs and forms a cluster of ejabberd servers. Needed parameters an
 -var access_key : Your AWS access key. <br>
 -var secret_key : Your AWS secret key. <br>
 -var region : AWS region. <br>
+(optional)
+-var ami : The ami of your instances can be set via this variable. Default value: ami-8c3beef6. The image is created by a packer/create_image.json run and is sufficient for ejabberd clustering. <br>
+-var ejabberddomain : The domain of the node. Default value: localhost. <br>
 
 ```bash
 terraform apply \
@@ -27,8 +30,28 @@ terraform apply \
 -var 'erlang_cookie=ERLANG_COOKIE_FOR_CLUSTERING' \
 -var 'access_key=YOUR_AWS_ACCESS_KEY' \
 -var 'secret_key=YOUR_AWS_SECRET_KEY' \
--var 'region=us-east-1'
+-var 'region=us-east-1' \
+-var 'ami=YOUR_AMI' \
+-var 'ejabberddomain=CUSTOM_DOMAIN_NAME'
 ```
 
-After Terraform has finished, you can access your ejabberd's admin panel from your server's public ip's 5280 port: SERVER_PUBLIC_IP:5280/admin
+After Terraform has finished, you can access your ejabberd's admin panel from your server's public ip's 5280 port: SERVER_PUBLIC_IP:5280/admin with your ejabberd credentials: `admin_ejabberd@ejabberddomain` `pass_ejabberd`.
 
+### How to add a new node to the cluster?
+By setting your 'instance_count' parameter to any number bigger than 1! Terraform will handle the rest by provisioning. When you increase the instance count in the cluster, new_terra_setup.sh runs to download ejabbberd 17.01. It is installed by the parameters you've given. <br>
+After you have a node that is started by new_terra_setup.sh, cluster_setup.sh script runs to add the particular node to the running cluster. In cluster_setup.sh, the variables that keep the IPs of the nodes are formatted in the form that can be joined to a cluster directly. <br> <br>
+Code below is run in cluster_setup.sh and does the following so that it's in the proper form for a join operation: <br>
+ip-xxx.xxx.xxx.xxx -> ip-xxx-xxx-xxx-xxx
+
+```bash
+export temp_ip=`echo ip-$temp_ip | tr  '.'  '-'`
+export ejabberd_cluster_ip=`echo ejabberd@$cluster_ip | tr  '.'  '-'`
+```
+
+### How to remove a node from the cluster?
+By simply decreasing the 'instance_count' parameter to a value that is smaller than its previous value. Or if you want to destroy the whole cluster, you can use the destroy option of Terraform.
+
+### Points requiring manual change in the code
+- AWS credentials in packer/create_image.json -> "AWS_ACCESS_KEY HERE" and "AWS_SECRET_KEY HERE"
+- Key name that should be provided from AWS (for resource "aws_instance" "ejabberdnode" in terraform/main.tf) -> "YOUR_AWS_KEYNAME"
+- Path to private key files (.pem) for the connections of the null_resources in terraform/main.tf. -> "YOUR.PEM"
